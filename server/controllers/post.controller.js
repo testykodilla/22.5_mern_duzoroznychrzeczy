@@ -18,6 +18,15 @@ export function getPosts(req, res) {
   });
 }
 
+export function editPost(req, res) {
+  Post.update({ cuid: req.params.cuid }, req.body.post).exec((err, post) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    res.json({ post });
+  });
+}
+
 /**
  * Save a post
  * @param req
@@ -35,7 +44,7 @@ export function addPost(req, res) {
   newPost.title = sanitizeHtml(newPost.title);
   newPost.name = sanitizeHtml(newPost.name);
   newPost.content = sanitizeHtml(newPost.content);
-
+  newPost.votes = 0;
   newPost.slug = slug(newPost.title.toLowerCase(), { lowercase: true });
   newPost.cuid = cuid();
   newPost.save((err, saved) => {
@@ -43,6 +52,22 @@ export function addPost(req, res) {
       res.status(500).send(err);
     }
     res.json({ post: saved });
+  });
+}
+/* eslint no-param-reassign: ["error", { "props": false }]*/
+export function votesUp(req, res) {
+  Post.findOne({ cuid: req.params.cuid }).then((post) => {
+    post.votes += 1;
+    post.save();
+    res.json({ post });
+  });
+}
+
+export function votesDown(req, res) {
+  Post.findOne({ cuid: req.params.cuid }).then((post) => {
+    post.votes -= 1;
+    post.save();
+    res.json({ post });
   });
 }
 

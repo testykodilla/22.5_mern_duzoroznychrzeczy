@@ -4,6 +4,9 @@ import callApi from '../../util/apiCaller';
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
 export const DELETE_POST = 'DELETE_POST';
+export const EDIT_POST = 'EDIT_POST';
+export const HIGH_FIVE = 'HIGH_FIVE';
+export const DOWN_LOW = 'DOWN_LOW';
 
 // Export Actions
 export function addPost(post) {
@@ -56,5 +59,51 @@ export function deletePost(cuid) {
 export function deletePostRequest(cuid) {
   return (dispatch) => {
     return callApi(`posts/${cuid}`, 'delete').then(() => dispatch(deletePost(cuid)));
+  };
+}
+
+export function highFive(postId) {
+  return {
+    type: HIGH_FIVE,
+    postId,
+  };
+}
+
+export function highFiveRequest(idPosta) {
+  return (dispatch) => {
+    return callApi(`votesUp/${idPosta}`, 'put').then(() => dispatch(highFive(idPosta)));
+  };
+}
+
+export function downLow(postId) {
+  return {
+    type: DOWN_LOW,
+    postId,
+  };
+}
+
+export function downLowRequest(idPosta) {
+  return (dispatch) => {
+    return callApi(`votesDown/${idPosta}`, 'put').then(() => dispatch(downLow(idPosta)));
+  };
+}
+
+export function editPost(cuid, post) {
+  return {
+    type: EDIT_POST,
+    cuid,
+    post,
+  };
+}
+
+export function editPostRequest(cuid, post) {
+  return (dispatch) => {
+    return callApi(`posts/${cuid}`, 'put', {
+      post: {
+        name: post.name,
+        title: post.title,
+        content: post.content,
+      },
+    }).then(() => dispatch(editPost(cuid, post)));
   };
 }
